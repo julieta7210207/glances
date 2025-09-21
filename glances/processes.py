@@ -449,7 +449,9 @@ class GlancesProcesses:
                 lambda p: not (BSD and p.info['name'] == 'idle')
                 and not (WINDOWS and p.info['name'] == 'System Idle Process')
                 and not (MACOS and p.info['name'] == 'kernel_task')
-                and not (self.no_kernel_threads and LINUX and p.info['gids'].real == 0),
+                and not (
+                    self.no_kernel_threads and LINUX and p.info['gids'].real == 0
+                ),
                 psutil.process_iter(attrs=sorted_attrs, ad_value=None),
             )
         )
