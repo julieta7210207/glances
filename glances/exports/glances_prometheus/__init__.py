@@ -28,7 +28,9 @@ class Export(GlancesExport):
         super().__init__(config=config, args=args)
 
         # Load the Prometheus configuration file section
-        self.export_enable = self.load_conf('prometheus', mandatories=['host', 'port', 'labels'], options=['prefix'])
+        self.export_enable = self.load_conf(
+            'prometheus', mandatories=['host', 'port', 'labels'], options=['prefix']
+        )
         if not self.export_enable:
             exit('Missing PROMETHEUS config')
 
@@ -53,7 +55,9 @@ class Export(GlancesExport):
         try:
             start_http_server(port=int(self.port), addr=self.host)
         except Exception as e:
-            logger.critical(f"Can not start Prometheus exporter on {self.host}:{self.port} ({e})")
+            logger.critical(
+                f"Can not start Prometheus exporter on {self.host}:{self.port} ({e})"
+            )
             sys.exit(2)
         else:
             logger.info(f"Start Prometheus exporter on {self.host}:{self.port}")
@@ -63,14 +67,18 @@ class Export(GlancesExport):
         logger.debug(f"Export {name} stats to Prometheus exporter")
 
         # Remove non number stats and convert all to float (for Boolean)
-        data = {str(k): float(v) for k, v in zip(columns, points) if isinstance(v, Number)}
+        data = {
+            str(k): float(v) for k, v in zip(columns, points) if isinstance(v, Number)
+        }
 
         key_name = self._stats.get_plugin(name).get_key()
 
         # Write metrics to the Prometheus exporter
         for metric, value in data.items():
             labels = self.labels
-            metric_name = self.prefix + self.METRIC_SEPARATOR + name + self.METRIC_SEPARATOR
+            metric_name = (
+                self.prefix + self.METRIC_SEPARATOR + name + self.METRIC_SEPARATOR
+            )
             try:
                 obj, stat = metric.split('.')
                 metric_name += stat
@@ -87,7 +95,9 @@ class Export(GlancesExport):
             labels = self.parse_tags(labels)
             # Manage an internal dict between metric name and Gauge
             if metric_name not in self._metric_dict:
-                self._metric_dict[metric_name] = Gauge(metric_name, "", labelnames=listkeys(labels))
+                self._metric_dict[metric_name] = Gauge(
+                    metric_name, "", labelnames=listkeys(labels)
+                )
             # Write the value
             if hasattr(self._metric_dict[metric_name], 'labels'):
                 # Add the labels (see issue #1255)
