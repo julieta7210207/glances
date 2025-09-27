@@ -257,15 +257,18 @@ class GlancesProcesses:
         """Set the process filter."""
         self._filter.filter = value
 
+
     @property
     def process_filter_key(self):
         """Get the process filter key."""
         return self._filter.filter_key
 
+
     @property
     def process_filter_re(self):
         """Get the process regular expression compiled."""
         return self._filter.filter_re
+
 
     # Export filter
 
@@ -274,16 +277,19 @@ class GlancesProcesses:
         """Get the export process filter (current export process filter list)."""
         return self._filter_export.filter
 
+
     @export_process_filter.setter
     def export_process_filter(self, value):
         """Set the export process filter list."""
         self._filter_export.filter = value
+
 
     # Kernel threads
 
     def disable_kernel_threads(self):
         """Ignore kernel threads in process list."""
         self.no_kernel_threads = True
+
 
     @property
     def sort_reverse(self):
@@ -293,23 +299,28 @@ class GlancesProcesses:
 
         return True
 
+
     def max_values(self):
         """Return the max values dict."""
         return self._max_values
+
 
     def get_max_values(self, key):
         """Get the maximum values of the given stat (key)."""
         return self._max_values[key]
 
+
     def set_max_values(self, key, value):
         """Set the maximum value for a specific stat (key)."""
         self._max_values[key] = value
+
 
     def reset_max_values(self):
         """Reset the maximum values dict."""
         self._max_values = {}
         for k in self._max_values_list:
             self._max_values[k] = 0.0
+
 
     def set_extended_stats(self, proc):
         """Set the extended stats for the given PID."""
@@ -358,6 +369,7 @@ class GlancesProcesses:
             ret['extended_stats'] = True
         return namedtuple_to_dict(ret)
 
+
     def get_extended_stats(self):
         """Return the extended stats.
 
@@ -367,6 +379,7 @@ class GlancesProcesses:
             if p.get('extended_stats'):
                 return p
         return None
+
 
     def __get_min_max_mean(self, proc, prefix=['cpu', 'memory']):
         """Return the min/max/mean for the given process"""
@@ -395,6 +408,7 @@ class GlancesProcesses:
             ret[stat_prefix + '_mean'] = ret[mean_sum_key] / ret[mean_counter_key]
         return ret
 
+
     def __get_extended_memory_swap(self, process):
         """Return the memory swap for the given process"""
         if not LINUX:
@@ -410,6 +424,7 @@ class GlancesProcesses:
             # is not enabled (see psutil #533/glances #413).
             memory_swap = None
         return memory_swap
+
 
     def __get_extended_connections(self, process):
         """Return a tuple with (tcp, udp) connections count
@@ -429,6 +444,7 @@ class GlancesProcesses:
             udp = None
         return tcp, udp
 
+
     def is_selected_extended_process(self, position):
         """Return True if the process is the selected one for extended stats."""
         return (
@@ -441,6 +457,7 @@ class GlancesProcesses:
             and position == self.args.cursor_position
             and not self.args.disable_cursor
         )
+
 
     def build_process_list(self, sorted_attrs):
         # Build the processes stats list (it is why we need psutil>=5.3.0) (see issue #2755)
@@ -462,11 +479,13 @@ class GlancesProcesses:
         # Sort the processes list by the current sort_key
         return sort_stats(processlist, sorted_by=self.sort_key, reverse=True)
 
+
     def get_sorted_attrs(self):
         defaults = ['cpu_percent', 'cpu_times', 'memory_percent', 'name', 'status', 'num_threads']
         optional = ['io_counters'] if not self.disable_io_counters else []
 
         return defaults + optional
+
 
     def get_displayed_attr(self):
         defaults = ['memory_info', 'nice', 'pid']
@@ -474,8 +493,10 @@ class GlancesProcesses:
 
         return defaults + optional
 
+
     def get_cached_attrs(self):
         return ['cmdline', 'username']
+
 
     def maybe_add_cached_attrs(self, sorted_attrs, cached_attrs):
         # Some stats are not sort key
@@ -492,6 +513,7 @@ class GlancesProcesses:
             is_cached = True
 
         return is_cached, sorted_attrs
+
 
     def get_pid_time_and_status(self, time_since_update, proc):
         # PID is the key
@@ -529,6 +551,7 @@ class GlancesProcesses:
         proc['io_counters'] += [io_tag]
 
         return proc
+
 
     def maybe_add_cached_stats(self, is_cached, cached_attrs, proc):
         if is_cached:

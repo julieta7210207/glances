@@ -11,12 +11,11 @@
 import sys
 from numbers import Number
 
-from prometheus_client import Gauge, start_http_server
-
 from glances.api import GlancesStats
 from glances.exports.export import GlancesExport
 from glances.globals import listkeys
 from glances.logger import logger
+from prometheus_client import Gauge, start_http_server
 
 class Export(GlancesExport):
     """This class manages the Prometheus export module."""
@@ -28,7 +27,9 @@ class Export(GlancesExport):
         super().__init__(config=config, args=args)
 
         # Load the Prometheus configuration file section
-        self.export_enable = self.load_conf('prometheus', mandatories=['host', 'port', 'labels'], options=['prefix'])
+        self.export_enable = self.load_conf(
+            'prometheus', mandatories=['host', 'port', 'labels'], options=['prefix']
+        )
         if not self.export_enable:
             exit('Missing PROMETHEUS config')
 
@@ -53,7 +54,9 @@ class Export(GlancesExport):
         try:
             start_http_server(port=int(self.port), addr=self.host)
         except Exception as e:
-            logger.critical(f"Can not start Prometheus exporter on {self.host}:{self.port} ({e})")
+            logger.critical(
+                f"Can not start Prometheus exporter on {self.host}:{self.port} ({e})"
+            )
             sys.exit(2)
         else:
             logger.info(f"Start Prometheus exporter on {self.host}:{self.port}")
@@ -87,7 +90,9 @@ class Export(GlancesExport):
             labels = self.parse_tags(labels)
             # Manage an internal dict between metric name and Gauge
             if metric_name not in self._metric_dict:
-                self._metric_dict[metric_name] = Gauge(metric_name, "", labelnames=listkeys(labels))
+                self._metric_dict[metric_name] = Gauge(
+                    metric_name, "", labelnames=listkeys(labels)
+                )
             # Write the value
             if hasattr(self._metric_dict[metric_name], 'labels'):
                 # Add the labels (see issue #1255)
