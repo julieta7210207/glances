@@ -30,7 +30,14 @@ psutil_version_info = tuple([int(num) for num in psutil.__version__.split('.')])
 mandatory_processes_stats_list = ['pid', 'name']
 
 # This constant defines the list of available processes sort key
-sort_processes_stats_list = ['cpu_percent', 'memory_percent', 'username', 'cpu_times', 'io_counters', 'name']
+sort_processes_stats_list = [
+    'cpu_percent',
+    'memory_percent',
+    'username',
+    'cpu_times',
+    'io_counters',
+    'name',
+]
 
 # Sort dictionary for human
 sort_for_human = {
@@ -752,7 +759,12 @@ def _sort_lambda(sorted_by='cpu_percent', sorted_by_secondary='memory_percent'):
     return {'io_counters': _sort_io_counters, 'cpu_times': _sort_cpu_times}.get(sorted_by, None)
 
 
-def sort_stats(stats, sorted_by='cpu_percent', sorted_by_secondary='memory_percent', reverse=True):
+def sort_stats(
+    stats,
+    sorted_by='cpu_percent',
+    sorted_by_secondary='memory_percent',
+    reverse=True,
+):
     """Return the stats (dict) sorted by (sorted_by).
     A secondary sort key should be specified.
 
@@ -763,7 +775,9 @@ def sort_stats(stats, sorted_by='cpu_percent', sorted_by_secondary='memory_perce
         return stats
 
     # Check if a specific sort should be done
-    sort_lambda = _sort_lambda(sorted_by=sorted_by, sorted_by_secondary=sorted_by_secondary)
+    sort_lambda = _sort_lambda(
+        sorted_by=sorted_by, sorted_by_secondary=sorted_by_secondary
+    )
 
     if sort_lambda is not None:
         # Specific sort
@@ -771,14 +785,27 @@ def sort_stats(stats, sorted_by='cpu_percent', sorted_by_secondary='memory_perce
             stats = sorted(stats, key=sort_lambda, reverse=reverse)
         except Exception:
             # If an error is detected, fallback to cpu_percent
-            stats = sorted(stats, key=sort_by_these_keys('cpu_percent', sorted_by_secondary), reverse=reverse)
+            stats = sorted(
+                stats,
+                key=sort_by_these_keys('cpu_percent', sorted_by_secondary),
+                reverse=reverse,
+            )
     else:
         # Standard sort
         try:
-            stats = sorted(stats, key=sort_by_these_keys(sorted_by, sorted_by_secondary), reverse=reverse)
+            stats = sorted(
+                stats,
+                key=sort_by_these_keys(sorted_by, sorted_by_secondary),
+                reverse=reverse,
+            )
         except (KeyError, TypeError):
             # Fallback to name
-            stats.sort(key=lambda process: process['name'] if process['name'] is not None else '~', reverse=False)
+            stats.sort(
+                key=lambda process: process['name']
+                if process['name'] is not None
+                else '~',
+                reverse=False,
+            )
 
     return stats
 
