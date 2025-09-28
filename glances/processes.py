@@ -453,6 +453,7 @@ class GlancesProcesses:
                 psutil.process_iter(attrs=sorted_attrs, ad_value=None),
             )
         )
+        )
 
         # Only get the info key
         # PsUtil 6+ no longer check PID reused #2755 so use is_running in the loop
